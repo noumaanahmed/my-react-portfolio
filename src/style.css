@@ -1,7 +1,7 @@
 html {
   --section-background-color: linear-gradient(
     to bottom left,
-    rgba(17, 16, 16, 0.582),
+    rgba(32, 35, 52, 0.582),
     rgba(12, 8, 24, 0.904)
   );
 
@@ -465,7 +465,7 @@ button:focus {
 }
 
 .blockquote-footer {
-  color: #a588c0 !important;
+  color: #88aac0 !important;
 }
 /* --------- */
 /* Projects */
@@ -577,18 +577,20 @@ button:focus {
 }
 
 .tech-icons {
-  font-size: 4.5em !important;
-  margin: 15px !important;
-  padding: 10px !important;
-  opacity: 0.93 !important;
-  border: 1.7px solid rgba(200, 137, 230, 0.637) !important;
-  vertical-align: middle !important;
-  text-align: center !important;
-  border-radius: 5px !important;
-  display: table !important;
-  box-shadow: 4px 5px 4px 3px rgba(89, 4, 168, 0.137) !important;
-  overflow: hidden !important;
-  transition: all 0.4s ease 0s !important;
+  display: flex; /* Set up a flexbox layout */
+  align-items: center; /* Center icon and text vertically */
+  justify-content: center; /* Center items initially */
+  position: relative;
+  font-size: 3em !important; /* Icon size */
+  margin: 10px !important; /* Space around the box */
+  padding: 15px !important; /* Space inside the box */
+  border: 2px solid transparent; /* Keep consistent border size */
+  border-radius: 5px !important; /* Rounded edges */
+  background-color: transparent !important; /* Default transparent background */
+  box-shadow: 4px 5px 4px 3px rgba(64, 123, 255, 0.3) !important; /* Subtle shadow */
+  box-sizing: border-box; /* Include border in element size */
+  transition: all 0.4s ease !important; /* Smooth transition for hover effects */
+  overflow: hidden !important; /* Prevent content overflow */
 }
 
 @media (max-width: 767px) {
@@ -597,14 +599,37 @@ button:focus {
   }
 }
 
+
 .tech-icons:hover {
-  transform: scale(1.05) !important;
-  overflow: hidden !important;
-  border: 2.2px solid rgba(197, 115, 230, 0.883) !important;
+  border-color: #305fcc; /* Change border color on hover */
+  box-shadow: 6px 7px 6px 4px rgba(48, 95, 204, 0.5) !important; /* Enhanced shadow */
+  background-color: white !important; /* White background on hover */
 }
+
+.tech-icons:hover svg {
+  color: #407bff !important; /* Light blue icon on hover */
+  transform: translateX(-30%) !important; /* Move icon to the left */
+  transition: transform 0.4s ease !important; /* Smooth movement */
+}
+
 .tech-icon-images {
   padding: 20px !important;
   line-height: 1.6 !important;
+}
+
+.tech-name {
+  display: none; /* Initially hidden */
+  font-size: 0.3em; /* Smaller text size */
+  color: #407bff !important; /* Light blue text */
+  margin-left: 15px; /* Space between icon and text */
+  white-space: nowrap; /* Prevent text wrapping */
+  opacity: 0; /* Initially invisible */
+  transition: opacity 0.4s ease !important; /* Smooth fade-in */
+}
+
+.tech-icons:hover .tech-name {
+  display: block; /* Make the text visible */
+  opacity: 1; /* Fade the text in */
 }
 
 .quote-card-view {
