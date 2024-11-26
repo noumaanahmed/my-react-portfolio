@@ -1,9 +1,13 @@
 const fetch = require("node-fetch-commonjs");
 const admin = require("firebase-admin");
 
+// Decode Firebase service account key from environment variable
+const serviceAccount = JSON.parse(
+  Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_KEY, "base64").toString()
+);
+
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
-  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
@@ -13,7 +17,7 @@ const db = admin.firestore();
 
 exports.handler = async (event) => {
   try {
-    // Step 1: Extract the visitor's IP address
+    // Extract IP address from Netlify-specific headers or fallback
     const clientIP =
       event.headers["x-nf-client-connection-ip"] || // Netlify-specific header
       event.headers["x-forwarded-for"]?.split(",")[0] || // Fallback to generic proxy header
@@ -26,7 +30,7 @@ exports.handler = async (event) => {
       };
     }
 
-    // Step 2: Use IPStack to fetch IP details
+    // Fetch IP details from IPStack using the environment variable
     const ipstackResponse = await fetch(
       `http://api.ipstack.com/${clientIP}?access_key=${process.env.IPSTACK_API_KEY}`
     );
@@ -39,7 +43,7 @@ exports.handler = async (event) => {
       };
     }
 
-    // Step 3: Log IP details to Firebase
+    // Save IP data to Firebase
     await db.collection("visitors").add({
       ip: ipData.ip,
       country: ipData.country_name,
@@ -49,33 +53,36 @@ exports.handler = async (event) => {
       latitude: ipData.latitude,
       longitude: ipData.longitude,
       timestamp: new Date().toISOString(),
+      headers: {
+        clientIP: clientIP,
+        userAgent: event.headers["user-agent"] || "Not available",
+        referer: event.headers["referer"] || "Not available",
+        host: event.headers["host"] || "Not available",
+      },
     });
 
-    // Step 4: Structure the Response
-    const responseDetails = {
-      ipData: {
-        city: ipData.city,
-        country: ipData.country_name,
-        ip: ipData.ip,
-        latitude: ipData.latitude,
-        longitude: ipData.longitude,
-        region: ipData.region_name,
-        zip: ipData.zip,
-        timestamp: new Date().toISOString(),
-      },
-      headers: {
-        "Client IP (x-nf-client-connection-ip)": event.headers["x-nf-client-connection-ip"] || "Not available",
-        "Forwarded IP (x-forwarded-for)": event.headers["x-forwarded-for"] || "Not available",
-        "User-Agent": event.headers["user-agent"] || "Not available",
-        Referrer: event.headers["referer"] || "Not available",
-        Host: event.headers["host"] || "Not available",
-      },
-    };
+    // Structure the Response
+    const responseDetails = `
+      city: "${ipData.city}" (string)
+      country: "${ipData.country_name}" (string)
+      ip: "${ipData.ip}" (string)
+      latitude: ${ipData.latitude} (number)
+      longitude: ${ipData.longitude} (number)
+      region: "${ipData.region_name}" (string)
+      timestamp: "${new Date().toISOString()}" (string)
+      zip: "${ipData.zip}" (string)
+      
+      <Headers Information>
+      Client IP (x-nf-client-connection-ip): "${clientIP}"
+      Forwarded IP (x-forwarded-for): "${event.headers["x-forwarded-for"] || 'Not available'}"
+      User-Agent: "${event.headers["user-agent"] || 'Not available'}"
+      Referrer: "${event.headers["referer"] || 'Not available'}"
+      Host: "${event.headers["host"] || 'Not available'}"
+    `;
 
-    // Step 5: Return Response
     return {
       statusCode: 200,
-      body: JSON.stringify(responseDetails, null, 2), // Pretty print JSON for readability
+      body: responseDetails.replace(/\n/g, "<br>"), // Converts newlines to <br> for easier viewing in a browser
     };
   } catch (error) {
     console.error("Error logging visitor:", error);
