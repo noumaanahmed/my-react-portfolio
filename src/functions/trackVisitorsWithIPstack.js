@@ -1,5 +1,5 @@
-import fetch from "node-fetch"; // Ensure you're using "node-fetch-commonjs" if CommonJS
-import admin from "firebase-admin";
+const fetch = require("node-fetch-commonjs");
+const admin = require("firebase-admin");
 
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
@@ -52,28 +52,30 @@ exports.handler = async (event) => {
     });
 
     // Step 4: Structure the Response
-    const responseDetails = `
-      city: "${ipData.city}" (string)
-      country: "${ipData.country_name}" (string)
-      ip: "${ipData.ip}" (string)
-      latitude: ${ipData.latitude} (number)
-      longitude: ${ipData.longitude} (number)
-      region: "${ipData.region_name}" (string)
-      timestamp: "${new Date().toISOString()}" (string)
-      zip: "${ipData.zip}" (string)
-      
-      <Headers Information>
-      Client IP (x-nf-client-connection-ip): "${event.headers["x-nf-client-connection-ip"] || 'Not available'}"
-      Forwarded IP (x-forwarded-for): "${event.headers["x-forwarded-for"] || 'Not available'}"
-      User-Agent: "${event.headers["user-agent"] || 'Not available'}"
-      Referrer: "${event.headers["referer"] || 'Not available'}"
-      Host: "${event.headers["host"] || 'Not available'}"
-    `;
+    const responseDetails = {
+      ipData: {
+        city: ipData.city,
+        country: ipData.country_name,
+        ip: ipData.ip,
+        latitude: ipData.latitude,
+        longitude: ipData.longitude,
+        region: ipData.region_name,
+        zip: ipData.zip,
+        timestamp: new Date().toISOString(),
+      },
+      headers: {
+        "Client IP (x-nf-client-connection-ip)": event.headers["x-nf-client-connection-ip"] || "Not available",
+        "Forwarded IP (x-forwarded-for)": event.headers["x-forwarded-for"] || "Not available",
+        "User-Agent": event.headers["user-agent"] || "Not available",
+        Referrer: event.headers["referer"] || "Not available",
+        Host: event.headers["host"] || "Not available",
+      },
+    };
 
     // Step 5: Return Response
     return {
       statusCode: 200,
-      body: responseDetails.replace(/\n/g, "<br>"), // Converts newlines to <br> for easier viewing in a browser
+      body: JSON.stringify(responseDetails, null, 2), // Pretty print JSON for readability
     };
   } catch (error) {
     console.error("Error logging visitor:", error);
