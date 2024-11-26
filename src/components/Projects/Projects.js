@@ -15,7 +15,10 @@ function Projects() {
         What I’ve Been  <strong className="purple">Building </strong>
         </h1>
         <p style={{ color: "white" }}>
-        Discover the projects that reflect my journey and expertise
+        Discover the projects that reflect my journey and expertise 
+        </p>
+        <p style={{ color: "white" }}>
+       <i>(more to come!)</i>
         </p>
         <Row style={{ justifyContent: "center", paddingBottom: "10px" }}>
           <Col md={4} className="project-card">
