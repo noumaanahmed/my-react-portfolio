@@ -27,3 +27,9 @@ yarn-error.log*
 
 Server/node_modules
 Server/config.js
+
+# Ignore Firebase Admin SDK JSON file
+/src/functions/visitortracking-e2a9f-firebase-adminsdk-53gp1-d1b77355d7.json
+
+# Local Netlify folder
+.netlify

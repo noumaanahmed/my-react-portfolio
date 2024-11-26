@@ -10,7 +10,7 @@ import {
   BrowserRouter as Router,
   Route,
   Routes,
-  Navigate
+  Navigate,
 } from "react-router-dom";
 import ScrollToTop from "./components/ScrollToTop";
 import "./style.css";
@@ -21,12 +21,29 @@ function App() {
   const [load, upadateLoad] = useState(true);
 
   useEffect(() => {
+    // Timer for preloader
     const timer = setTimeout(() => {
       upadateLoad(false);
     }, 1200);
 
+    // Clean up the timer on unmount
     return () => clearTimeout(timer);
   }, []);
+
+  // Call Netlify Function to log visitor details
+  useEffect(() => {
+    const trackVisitor = async () => {
+      try {
+        const response = await fetch("/.netlify/functions/trackVisitorsWithIPstack");
+        const data = await response.json();
+        console.log("Visitor Logged:", data.message);
+      } catch (error) {
+        console.error("Error logging visitor:", error);
+      }
+    };
+
+    trackVisitor();
+  }, []); // Empty dependency array ensures this runs once on initial load
 
   return (
     <Router>
@@ -39,7 +56,7 @@ function App() {
           <Route path="/project" element={<Projects />} />
           <Route path="/about" element={<About />} />
           <Route path="/resume" element={<Resume />} />
-          <Route path="*" element={<Navigate to="/"/>} />
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
         <Footer />
       </div>
