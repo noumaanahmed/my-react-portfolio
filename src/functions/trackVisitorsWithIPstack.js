@@ -17,9 +17,16 @@ const db = admin.firestore();
 
 exports.handler = async (event) => {
   try {
-    // Parse body for geolocation data
-    const requestBody = JSON.parse(event.body || "{}");
-    const { latitude, longitude } = requestBody;
+    // Parse body safely and provide default values
+    let requestBody = {};
+    if (event.body) {
+      try {
+        requestBody = JSON.parse(event.body);
+      } catch (error) {
+        console.error("Invalid JSON in request body:", error.message);
+      }
+    }
+    const { latitude = null, longitude = null } = requestBody;
 
     // Step 1: Extract IP addresses from headers
     const allIPs = event.headers["x-forwarded-for"]?.split(",") || [];
