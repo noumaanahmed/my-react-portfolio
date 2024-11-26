@@ -75,6 +75,76 @@ button:focus {
 /* --------- */
 /* Navbar Section  */
 /* --------- */
+
+@media (max-width: 767px) {
+  /* Adjust navbar size for mobile */
+  .navbar {
+    padding: 0.5rem 1rem !important; /* Smaller navbar padding */
+    font-size: 1rem !important; /* Slightly smaller text */
+        backdrop-filter: blur(10px) !important;
+  }
+
+  /* Adjust logo size for mobile */
+  .logo {
+    height: 3em !important; /* Smaller logo */
+    width: auto !important; /* Maintain aspect ratio */
+  }
+
+  /* Glassy effect for expanded navbar menu */
+  .navbar-collapse {
+    /* background-color: rgba(26, 37, 46, 0.95) !important;  */
+    backdrop-filter: blur(10px) !important;
+    transition: all 0.3s ease-in-out;
+    z-index: 1050; /* Ensure it appears above content */
+  }
+
+  /* Transparent when collapsed */
+  .navbar-collapse.collapse {
+    background-color: transparent !important;
+    backdrop-filter: none !important;
+  }
+
+  /* Remove hamburger menu button background */
+  .navbar-toggler {
+    background-color: transparent !important;
+    border: none !important;
+  }
+
+  /* Hamburger menu bar styles */
+  .navbar-toggler span {
+    background-color: white !important; /* White lines */
+    height: 3px !important;
+    width: 20px !important;
+    margin: 4px auto;
+    display: block;
+    transition: all 0.3s ease-in-out;
+  }
+
+  /* Nav links - smaller padding and font size */
+  .navbar-nav .nav-link {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.85rem !important; /* Slightly smaller font */
+    color: white !important; /* Ensure text is visible */
+  }
+
+  /* Navbar visibility animations */
+.navbar-visible {
+  transform: translateY(0);
+  transition: transform 0.3s ease-in-out;
+}
+
+.navbar-hidden {
+  transform: translateY(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+}
+
+
+
+
+
+
+
 .sticky {
   background-color: #1a252ea9 !important;
   transition: all 0.3s ease-out 0s !important;
@@ -106,6 +176,8 @@ button:focus {
   left: 0 !important;
   opacity: 1 !important;
 }
+
+
 
 .navbar-toggler:focus,
 .navbar-toggler:active {
@@ -218,6 +290,7 @@ button:focus {
 .navbar-nav .nav-item a:hover::after {
   width: 100%;
 }
+
 
 
 
@@ -592,6 +665,36 @@ button:focus {
   color: white !important;
 }
 
+@media (max-width: 767px) {
+  /* Adjust tech and tool icons for mobile view */
+  .tech-icons {
+    flex-direction: column; /* Stack icon and text vertically */
+    width: 100px; /* Set consistent box width for mobile */
+    height: 100px; /* Set consistent box height for mobile */
+    margin: 10px auto; /* Center boxes and adjust spacing */
+    padding: 8px; /* Add padding inside the box */
+    font-size: 2em; /* Adjust font size for icons */
+  }
+
+  .tech-icons svg {
+    font-size: 2em; /* Keep icons consistent in size */
+    max-width: 80%; /* Prevent overflow */
+    max-height: 80%; /* Prevent overflow */
+  }
+
+  .tech-name {
+    font-size: 0.8em; /* Slightly smaller text for mobile */
+    margin-top: 5px; /* Space between icon and text */
+    text-align: center; /* Center the text */
+  }
+
+  .tech-icons:hover svg {
+    transform: translateX(-20%); /* Slight hover effect on icon */
+    transition: transform 0.4s ease; /* Smooth hover transition */
+  }
+}
+
+
 .tech-icons {
   display: flex; /* Set up a flexbox layout */
   align-items: center; /* Center icon and text vertically */
@@ -609,11 +712,7 @@ button:focus {
   overflow: hidden !important; /* Prevent content overflow */
 }
 
-@media (max-width: 767px) {
-  .tech-icons {
-    margin: 10px !important;
-  }
-}
+
 
 
 .tech-icons:hover {
