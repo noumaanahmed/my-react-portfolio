@@ -1,7 +1,7 @@
 html {
   --section-background-color: linear-gradient(
     to bottom left,
-    rgba(32, 35, 52, 0.582),
+    rgba(43, 51, 92, 0.582),
     rgba(12, 8, 24, 0.904)
   );
 
@@ -140,24 +140,38 @@ button:focus {
   opacity: 0.9 !important;
 }
 
+.logo {
+  height: 5.4em !important;
+  width: 6.5em !important;
+}
+
+/* Target smaller screens */
 @media (max-width: 767px) {
-  .navbar {
-    padding: 1rem 2rem !important;
-    font-size: 1.4rem !important;
-    background-color: #182327 !important;
+  .logo {
+    height: 3em !important; /* Reduce the height for mobile */
+    width: auto !important; /* Maintain aspect ratio */
   }
-  .navbar-nav .nav-item a::after {
-    display: none !important;
+
+  .navbar {
+    padding: 0.5rem 1rem !important; /* Reduce padding for a smaller navbar */
+  }
+
+  .navbar-toggler span {
+    height: 3px !important; /* Smaller toggle bars */
+    width: 20px !important;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 0.5rem !important; /* Smaller nav link padding */
+    font-size: 0.85rem !important; /* Reduce font size */
   }
 }
+
 .navbar-brand {
   color: rgb(250, 250, 250) !important;
 }
 
-.logo {
-  height: 1.4em !important;
-  width: 2.5em !important;
-}
+
 
 .navbar-nav .nav-link {
   color: white !important;
@@ -204,6 +218,8 @@ button:focus {
 .navbar-nav .nav-item a:hover::after {
   width: 100%;
 }
+
+
 
 /* --------- */
 /* Home section */
@@ -486,7 +502,7 @@ button:focus {
 }
 
 .project-card-view {
-  box-shadow: 0 4px 5px 3px rgba(119, 53, 136, 0.459) !important;
+  box-shadow: 0 4px 5px 3px rgba(56, 53, 136, 0.459) !important;
   color: white !important;
   background-color: transparent !important;
   opacity: 0.9 !important;
@@ -496,7 +512,7 @@ button:focus {
 .project-card-view:hover {
   transform: scale(1.02) !important;
   overflow: hidden !important;
-  box-shadow: 0 4px 4px 5px rgba(129, 72, 144, 0.561) !important;
+  box-shadow: 0 4px 4px 5px rgba(76, 72, 144, 0.561) !important;
 }
 
 .blog-card {
@@ -544,14 +560,14 @@ button:focus {
 
 .btn-primary {
   color: #fff !important;
-  background-color: #623686 !important;
-  border-color: #623686 !important;
+  background-color: #365986 !important;
+  border-color: #366d86 !important;
 }
 
 .btn-primary:hover {
   color: #fff !important;
-  background-color: #6d20c5d7 !important;
-  border-color: #6d20c5d7 !important;
+  background-color: #205ac5d7 !important;
+  border-color: #204cc5d7 !important;
 }
 .btn:focus {
   outline: none !important;
@@ -696,14 +712,14 @@ button:focus {
 .resume .resume-item {
   padding: 0 0 10px 25px;
   margin-top: -2px;
-  border-left: 2px solid #8a49a8;
+  border-left: 2px solid #5349a8;
   position: relative;
 }
 
 .resume .resume-item .resume-title {
   line-height: 18px;
   font-size: 0.9em;
-  background: #5234795d;
+  background: #3534795d;
   padding: 8px 15px;
   display: inline-block;
   font-weight: 600;
@@ -733,7 +749,7 @@ button:focus {
   left: -9px;
   top: 0;
   background: #fff;
-  border: 2px solid #8a49a8;
+  border: 2px solid #4b49a8;
 }
 
 .like-item {
@@ -743,8 +759,8 @@ button:focus {
 }
 
 .like-btn {
-  background-color: #934cce5e !important;
-  border-color: #934cce5e !important;
+  background-color: #574cce5e !important;
+  border-color: #5b4cce5e !important;
   padding: 0.25rem 0.98rem !important;
   border-radius: 5px !important;
   line-height: 1.4 !important;
@@ -753,8 +769,8 @@ button:focus {
 
 .like-btn:hover {
   transform: translateY(-2px) !important;
-  background-color: #a24dd386 !important;
-  border-color: #a24dd386 !important;
+  background-color: #544dd386 !important;
+  border-color: #4d4dd386 !important;
 }
 
 .animate-like {
