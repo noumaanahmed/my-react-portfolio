@@ -17,20 +17,28 @@ const db = admin.firestore();
 
 exports.handler = async (event) => {
   try {
-    // Extract IP address from Netlify-specific headers or fallback
-    const clientIP =
+    // Step 1: Extract IP address from headers
+    let clientIP =
       event.headers["x-nf-client-connection-ip"] || // Netlify-specific header
       event.headers["x-forwarded-for"]?.split(",")[0] || // Fallback to generic proxy header
       "IP not available";
 
+    // Step 2: Filter IPv4 address (if needed)
+    const ipv4Regex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/; // Matches IPv4 addresses
+    if (!ipv4Regex.test(clientIP)) {
+      // If the extracted IP isn't IPv4, log an error or handle fallback
+      console.warn(`Non-IPv4 detected: ${clientIP}`);
+      clientIP = "IP not available"; // Fallback or log this case
+    }
+
     if (clientIP === "IP not available") {
       return {
         statusCode: 400,
-        body: JSON.stringify({ message: "Unable to retrieve IP address" }),
+        body: JSON.stringify({ message: "Unable to retrieve IPv4 address" }),
       };
     }
 
-    // Fetch IP details from IPStack using the environment variable
+    // Step 3: Fetch IP details from IPStack
     const ipstackResponse = await fetch(
       `http://api.ipstack.com/${clientIP}?access_key=${process.env.IPSTACK_API_KEY}`
     );
@@ -43,7 +51,7 @@ exports.handler = async (event) => {
       };
     }
 
-    // Save IP data to Firebase
+    // Step 4: Save IP data to Firebase
     await db.collection("visitors").add({
       ip: ipData.ip,
       country: ipData.country_name,
@@ -61,7 +69,7 @@ exports.handler = async (event) => {
       },
     });
 
-    // Structure the Response
+    // Step 5: Structure the Response
     const responseDetails = `
       city: "${ipData.city}" (string)
       country: "${ipData.country_name}" (string)
