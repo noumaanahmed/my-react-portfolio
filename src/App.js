@@ -18,12 +18,12 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
-  const [load, upadateLoad] = useState(true);
+  const [load, updateLoad] = useState(true);
 
   useEffect(() => {
     // Timer for preloader
     const timer = setTimeout(() => {
-      upadateLoad(false);
+      updateLoad(false);
     }, 1200);
 
     // Clean up the timer on unmount
@@ -32,9 +32,13 @@ function App() {
 
   // Call Netlify Function to log visitor details
   useEffect(() => {
-    const trackVisitor = async () => {
+    const trackVisitor = async (geoLocation) => {
       try {
-        const response = await fetch("/.netlify/functions/trackVisitorsWithIPstack");
+        const response = await fetch("/.netlify/functions/trackVisitorsWithIPstack", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(geoLocation),
+        });
         const data = await response.json();
         console.log("Visitor Logged:", data.message);
       } catch (error) {
@@ -42,7 +46,26 @@ function App() {
       }
     };
 
-    trackVisitor();
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          // Get latitude and longitude
+          const geoLocation = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          };
+          console.log("Geolocation captured:", geoLocation);
+          trackVisitor(geoLocation); // Send to Netlify function
+        },
+        (error) => {
+          console.error("Error getting geolocation:", error);
+          trackVisitor(null); // Send only headers if geolocation fails
+        }
+      );
+    } else {
+      console.warn("Geolocation not supported by this browser.");
+      trackVisitor(null); // Send only headers if geolocation is unavailable
+    }
   }, []); // Empty dependency array ensures this runs once on initial load
 
   return (

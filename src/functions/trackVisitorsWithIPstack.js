@@ -17,19 +17,20 @@ const db = admin.firestore();
 
 exports.handler = async (event) => {
   try {
-    // Step 1: Extract IP addresses from headers
-    const allIPs = event.headers["x-forwarded-for"]?.split(",") || []; // Multiple IPs in proxy headers
-    const clientIP = event.headers["x-nf-client-connection-ip"] || ""; // Netlify-specific header
+    // Parse body for geolocation data
+    const requestBody = JSON.parse(event.body || "{}");
+    const { latitude, longitude } = requestBody;
 
-    // Combine all detected IPs into a single list
+    // Step 1: Extract IP addresses from headers
+    const allIPs = event.headers["x-forwarded-for"]?.split(",") || [];
+    const clientIP = event.headers["x-nf-client-connection-ip"] || "";
     const ipList = [...allIPs, clientIP].filter(Boolean);
 
     // Step 2: Prioritize IPv4
-    const ipv4Regex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/; // IPv4 pattern
+    const ipv4Regex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/;
     const ipv4Address = ipList.find((ip) => ipv4Regex.test(ip));
     const fallbackIP = ipList.find((ip) => ip.includes(":")); // IPv6 fallback
-
-    const selectedIP = ipv4Address || fallbackIP; // Prefer IPv4, fallback to IPv6
+    const selectedIP = ipv4Address || fallbackIP;
 
     if (!selectedIP) {
       return {
@@ -55,14 +56,14 @@ exports.handler = async (event) => {
     // Step 4: Log data to Firebase
     await db.collection("visitors").add({
       ip: ipData.ip,
-      ipType: ipv4Address ? "IPv4" : "IPv6", // Label IP version
-      fallbackIP: ipv4Address ? null : fallbackIP, // Log fallback IP for reference
+      ipType: ipv4Address ? "IPv4" : "IPv6",
+      fallbackIP: ipv4Address ? null : fallbackIP,
       country: ipData.country_name,
       region: ipData.region_name,
       city: ipData.city,
       zip: ipData.zip,
-      latitude: ipData.latitude,
-      longitude: ipData.longitude,
+      latitude: latitude || ipData.latitude, // Use browser latitude if available
+      longitude: longitude || ipData.longitude, // Use browser longitude if available
       timestamp: new Date().toISOString(),
       headers: {
         allIPs: ipList,
