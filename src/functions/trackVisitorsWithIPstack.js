@@ -23,22 +23,21 @@ exports.handler = async (event) => {
       event.headers["x-forwarded-for"]?.split(",")[0] || // Fallback to generic proxy header
       "IP not available";
 
-    // Step 2: Filter IPv4 address (if needed)
     const ipv4Regex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/; // Matches IPv4 addresses
+
+    // Log if it's not IPv4, but still proceed to handle IPv6
     if (!ipv4Regex.test(clientIP)) {
-      // If the extracted IP isn't IPv4, log an error or handle fallback
       console.warn(`Non-IPv4 detected: ${clientIP}`);
-      clientIP = "IP not available"; // Fallback or log this case
     }
 
     if (clientIP === "IP not available") {
       return {
         statusCode: 400,
-        body: JSON.stringify({ message: "Unable to retrieve IPv4 address" }),
+        body: JSON.stringify({ message: "Unable to retrieve IP address" }),
       };
     }
 
-    // Step 3: Fetch IP details from IPStack
+    // Step 2: Fetch IP details from IPStack
     const ipstackResponse = await fetch(
       `http://api.ipstack.com/${clientIP}?access_key=${process.env.IPSTACK_API_KEY}`
     );
@@ -51,9 +50,10 @@ exports.handler = async (event) => {
       };
     }
 
-    // Step 4: Save IP data to Firebase
+    // Step 3: Save IP data to Firebase
     await db.collection("visitors").add({
       ip: ipData.ip,
+      type: ipv4Regex.test(clientIP) ? "IPv4" : "IPv6", // Label IP version
       country: ipData.country_name,
       region: ipData.region_name,
       city: ipData.city,
@@ -69,11 +69,12 @@ exports.handler = async (event) => {
       },
     });
 
-    // Step 5: Structure the Response
+    // Step 4: Structure the Response
     const responseDetails = `
       city: "${ipData.city}" (string)
       country: "${ipData.country_name}" (string)
       ip: "${ipData.ip}" (string)
+      type: "${ipv4Regex.test(clientIP) ? "IPv4" : "IPv6"}" (string)
       latitude: ${ipData.latitude} (number)
       longitude: ${ipData.longitude} (number)
       region: "${ipData.region_name}" (string)
