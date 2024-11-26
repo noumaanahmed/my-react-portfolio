@@ -1,5 +1,6 @@
+const fetch = require('node-fetch-commonjs');
 const admin = require('firebase-admin');
-const fetch = require('node-fetch');
+
 require('dotenv').config();
 
 
@@ -44,7 +45,7 @@ exports.handler = async (event) => {
       zip: ipData.zip,
       latitude: ipData.latitude,
       longitude: ipData.longitude,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date().toLocaleString(),
     });
 
     return {
